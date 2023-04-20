@@ -26,7 +26,7 @@ function readTime()
 
 	global $SITEURL;
 
-	$info = file_get_contents(GSPLUGINPATH . 'readTime/RTinfo/db.json');
+	$info = file_get_contents(GSDATAOTHERPATH . 'readTime/db.json');
 	$json = json_decode($info);
 
 	echo '
