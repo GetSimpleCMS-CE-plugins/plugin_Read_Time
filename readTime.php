@@ -10,7 +10,7 @@ i18n_merge('readTime') || i18n_merge('readTime', 'en_US');
 register_plugin(
 	$thisfile, //Plugin id
 	'Read Time', 	//Plugin name
-	'1.1', 		//Plugin version
+	'1.2', 		//Plugin version
 	'Multicolor',  //Plugin author
 	'https://paypal.me/multicol0r', //author website
 	i18n_r('readTime/LANG_Description'), //Plugin description
@@ -26,13 +26,35 @@ function readTime()
 
 	global $SITEURL;
 
-	$info = file_get_contents(GSDATAOTHERPATH . 'readTime/db.json');
-	$json = json_decode($info);
+	$file = GSDATAOTHERPATH . 'readTime/db.json';
 
-	echo '
+	if (file_exists($file)) {
+		$info = file_get_contents(GSDATAOTHERPATH . 'readTime/db.json');
+		$json = json_decode($info);
+
+		echo '
+			<div style="display:flex; align-items:center; margin-bottom:30px;">
+				<img src="' . $SITEURL . 'plugins/readTime/img/clock.svg" style="width:20px; margin:0 5px; display:inline-block;">
+				<span id="showReadTime" style="margin-right:5px;"></span> ' . $json->info . '
+			</div>
+	
+			<script>
+				function readingTime() {
+					const text = `' . strip_tags(str_replace('`', '"', returnPageContent(return_page_slug()))) . '`;
+					const wpm = 225;
+					const words = text.trim().split(/\s+/).length;
+					const time = Math.ceil(words / wpm);
+					document.getElementById("showReadTime").innerText = time;
+				}
+				readingTime();
+			</script>
+			';
+	} else {
+
+		echo '
 		<div style="display:flex; align-items:center; margin-bottom:30px;">
 			<img src="' . $SITEURL . 'plugins/readTime/img/clock.svg" style="width:20px; margin:0 5px; display:inline-block;">
-			<span id="showReadTime" style="margin-right:5px;"></span> ' . $json->info . '
+			<span id="showReadTime" style="margin-right:5px;"></span> ' .  i18n_r('readTime/LANG_Placeholder') . '
 		</div>
 
 		<script>
@@ -46,6 +68,7 @@ function readTime()
 			readingTime();
 		</script>
 		';
+	}
 }
 
 function readTimeSettings()
